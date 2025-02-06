@@ -96,29 +96,23 @@ with st.sidebar:
         # Initialize ChatGroq with the provided Groq API key
         llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
 
-        # Initialize the chat prompt template with improved context handling
         chat_prompt = ChatPromptTemplate.from_messages([
-            SystemMessagePromptTemplate.from_template(
-                """You are a helpful AI assistant that provides accurate information based on the given context. 
-                When you see tables, diagrams, or structured content in the context:
-                1. Respond with high confidence if the information is clearly present
-                2. Provide complete and accurate details from the table/content
-                3. Do not express uncertainty when the information is directly available
-                4. Format tables and structured data clearly in your response
-                
-                Current conversation memory:
-                {history}
-                """
-            ),
-            HumanMessagePromptTemplate.from_template(
-                """Context information:
-                {context}
-                
-                Please provide a clear and accurate response to this question: {question}
-                If you see a table or structured content in the context, make sure to present it accurately.
-                """
-            )
+            ("system", """You are a helpful AI assistant that provides accurate information based on the given context. 
+            When you see tables, diagrams, or structured content in the context:
+            1. Respond with high confidence if the information is clearly present
+            2. Provide complete and accurate details from the table/content
+            3. Do not express uncertainty when the information is directly available
+            4. Format tables and structured data clearly in your response
+            
+            Current conversation memory:
+            {history}"""),
+            ("human", """Context information:
+            {context}
+            
+            Please provide a clear and accurate response to this question: {question}
+            If you see a table or structured content in the context, make sure to present it accurately.""")
         ])
+
 
         def prepare_context(context_docs):
             """
