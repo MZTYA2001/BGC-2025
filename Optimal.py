@@ -468,13 +468,26 @@ for i, message in enumerate(st.session_state.messages):
 
 # Process voice input
 if voice_input:
-    if "vectors" in st.session_state and st.session_state.vectors is not None:
-        response = process_query(voice_input, st.session_state.vectors.get_relevant_documents(voice_input))
-        
-        process_response(voice_input, response, is_voice=True)
-    else:
+    try:
+        if "vectors" not in st.session_state:
+            raise ValueError("Vectors not initialized in session state")
+            
+        if st.session_state.vectors is None:
+            raise ValueError("Vectors object is None")
+            
+        # Get relevant documents with error handling
+        try:
+            relevant_docs = st.session_state.vectors.get_relevant_documents(voice_input)
+            response = process_query(voice_input, relevant_docs)
+            process_response(voice_input, response, is_voice=True)
+        except Exception as e:
+            raise ValueError(f"Error getting relevant documents: {str(e)}")
+            
+    except Exception as e:
+        error_msg = str(e)
         assistant_response = (
-            "لم يتم تحميل التضميدات. يرجى التحقق مما إذا كان مسار التضميدات صحيحًا." if interface_language == "العربية" else "Embeddings not loaded. Please check if the embeddings path is correct."
+            f"عذراً، حدث خطأ: {error_msg}" if interface_language == "العربية" 
+            else f"Sorry, an error occurred: {error_msg}"
         )
         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
         with st.chat_message("assistant"):
@@ -488,13 +501,26 @@ else:
 
 # Process text input
 if human_input:
-    if "vectors" in st.session_state and st.session_state.vectors is not None:
-        response = process_query(human_input, st.session_state.vectors.get_relevant_documents(human_input))
-        
-        process_response(human_input, response)
-    else:
+    try:
+        if "vectors" not in st.session_state:
+            raise ValueError("Vectors not initialized in session state")
+            
+        if st.session_state.vectors is None:
+            raise ValueError("Vectors object is None")
+            
+        # Get relevant documents with error handling
+        try:
+            relevant_docs = st.session_state.vectors.get_relevant_documents(human_input)
+            response = process_query(human_input, relevant_docs)
+            process_response(human_input, response)
+        except Exception as e:
+            raise ValueError(f"Error getting relevant documents: {str(e)}")
+            
+    except Exception as e:
+        error_msg = str(e)
         assistant_response = (
-            "لم يتم تحميل التضميدات. يرجى التحقق مما إذا كان مسار التضميدات صحيحًا." if interface_language == "العربية" else "Embeddings not loaded. Please check if the embeddings path is correct."
+            f"عذراً، حدث خطأ: {error_msg}" if interface_language == "العربية" 
+            else f"Sorry, an error occurred: {error_msg}"
         )
         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
         with st.chat_message("assistant"):
