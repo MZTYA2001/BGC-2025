@@ -113,7 +113,6 @@ with st.sidebar:
             If you see a table or structured content in the context, make sure to present it accurately.""")
         ])
 
-
         def prepare_context(context_docs):
             """
             Prepare context for the LLaMA model with improved handling of tables and structured content
@@ -194,12 +193,12 @@ with st.sidebar:
                 try:
                     # Load first FAISS index
                     vectors_1 = FAISS.load_local(
-                    embeddings_path, embeddings, allow_dangerous_deserialization=True
+                        embeddings_path, embeddings, allow_dangerous_deserialization=True
                     )
 
                     # Load second FAISS index
                     vectors_2 = FAISS.load_local(
-                    embeddings_path_2, embeddings, allow_dangerous_deserialization=True
+                        embeddings_path_2, embeddings, allow_dangerous_deserialization=True
                     )
 
                     # Merge both FAISS indexes
@@ -211,6 +210,7 @@ with st.sidebar:
                 except Exception as e:
                     st.error(f"Error loading embeddings: {str(e)}")
                     st.session_state.vectors = None
+
         # Microphone button in the sidebar
         st.markdown("### الإدخال الصوتي" if interface_language == "العربية" else "### Voice Input")
         input_lang_code = "ar" if interface_language == "العربية" else "en"  # Set language code based on interface language
